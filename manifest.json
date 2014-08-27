@@ -15,5 +15,8 @@
       "js": ["myscript.js"],
       "run_at": "document_idle"
     }
-  ]
+    ],
+    "background": {
+      "scripts": ["popup.js"]
+    }
 }

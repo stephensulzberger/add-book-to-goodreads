@@ -1,9 +1,8 @@
 //
 //
-chrome.extension.onRequest.addListener(
+chrome.runtime.onMessage.addListener(
 
 function(request, sender, sendResponse) {
-
     console.log('content is ' + request.content.length + ' bytes');
     console.log('content type is ' + typeof(request));
     //console.log(request.content);
@@ -46,26 +45,34 @@ function(request, sender, sendResponse) {
         var newDiv = null;
 
         function printDesc() {
-            var descriptions = req.responseXML.getElementsByTagName("reviews_widget");
-            var title = req.responseXML.getElementsByTagName("title");
-            var author = req.responseXML.getElementsByTagName("author");
-            author = author[0].getElementsByTagName("name");
-            for (var i = 0, desc; desc = descriptions[i]; i++) {
-                newDiv = document.createElement("div");
-                console.log(desc);
-                newContent = descriptions[i].textContent;
-                console.log(newContent);
-                //build iframe for "add to goodreads"
-                goodreadsContent = '<iframe height="110" width="325" frameborder="0" scrolling="no" src="';
-                goodreadsContent += "http://www.goodreads.com/book/add_to_books_widget/" + isbn + "?atmb_widget%5Bbutton%5D=atmb_widget_1.png&amp;";
-                goodreadsContent += '"></iframe><p>';
-                //reviews widget code from XML file
-                //goodreadsContent += newContent;
-                goodreadsContent += '<i>' + title[0].textContent + '</i> by: ' + author[0].textContent;
+            if (req.status == 200) {
+                var descriptions = req.responseXML.getElementsByTagName("reviews_widget");
+                var title = req.responseXML.getElementsByTagName("title");
+                var author = req.responseXML.getElementsByTagName("author");
+                author = author[0].getElementsByTagName("name");
+                for (var i = 0, desc; desc = descriptions[i]; i++) {
+                    newDiv = document.createElement("div");
+                    console.log(desc);
+                    newContent = descriptions[i].textContent;
+                    console.log(newContent);
+                    //build iframe for "add to goodreads"
+                    goodreadsContent = '<iframe height="110" width="325" frameborder="0" scrolling="no" src="';
+                    goodreadsContent += "http://www.goodreads.com/book/add_to_books_widget/" + isbn + "?atmb_widget%5Bbutton%5D=atmb_widget_1.png&amp;";
+                    goodreadsContent += '"></iframe><p>';
+                    //reviews widget code from XML file
+                    //goodreadsContent += newContent;
+                    goodreadsContent += '<i>' + title[0].textContent + '</i> by: ' + author[0].textContent;
 
-                newDiv.innerHTML = goodreadsContent;
-                // add the newly created element and it's content into the DOM
-                document.body.appendChild(newDiv);
+                    newDiv.innerHTML = goodreadsContent;
+                    // add the newly created element and it's content into the DOM
+                    document.body.appendChild(newDiv);
+                }
+            }
+            else {
+                badDiv = document.createElement("div");
+                pageContent = req.responseText;
+                badDiv.innerHTML = pageContent;
+                document.body.appendChild(badDiv);
             }
         }
     } else {
@@ -76,7 +83,7 @@ function(request, sender, sendResponse) {
     }
 
 });
-chrome.tabs.getSelected(null, function(tab) {
+chrome.tabs.query({active: true}, function(tab) {
     chrome.tabs.executeScript(tab.id, {
         file: 'myscript.js'
     });
