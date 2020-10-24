@@ -5,7 +5,6 @@ chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         console.log('content is ' + request.content.length + ' bytes');
         console.log('content type is ' + typeof (request));
-        //console.log(request.content);
 
         var isbnScan10 = request.content.match(/ISBN(-*1(?:(0)|3))?\s*?:?\s*?(97(8|9))?\d{9}(\d|X)/i);
         var isbnScan13 = request.content.match(/ISBN(-*1(?:(0)|3))\s*?:?\s*[0-9]{1,}(\s|-)[0-9]{1,}(\s|-)[0-9]{4,}(\s|-)[0-9]{1,}(\s|-)(([0-9]|x){1,})*/i);
@@ -23,8 +22,6 @@ chrome.runtime.onMessage.addListener(
             var tmp = isbnScan13[0];
             bookID = tmp.match(/[0-9]{1,}(\s|-)[0-9]{1,}(\s|-)[0-9]{4,}(\s|-)[0-9]{1,}(\s|-)(([0-9]|x){1,})*/gm);
         } else if (asinScan != null) {
-            // var tmp = asinScan[0]; 
-            // isbnResult = tmp.match(/([A-Z0-9]{10})/gmi);
             bookID = asinScan[1];
         }
 
