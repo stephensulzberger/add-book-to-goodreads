@@ -8,7 +8,7 @@ function(request, sender, sendResponse) {
     //console.log(request.content);
     //split into two regex patterns so it is a bit more clear what they actually do
     isbnScan = request.content.match(/ISBN(-*1(?:(0)|3))?\s*?:?\s*?(97(8|9))?\d{9}(\d|X)/i);
-    isbnScan2 = request.content.match(/ISBN(-*1(?:(0)|3))?:?\s[0-9]{1,}(\s|-)[0-9]{1,}(\s|-)[0-9]{4,}(\s|-)[0-9]{1,}(\s|-)(([0-9]|x){1,})*/i);
+    isbnScan2 = request.content.match(/ISBN(-*1(?:(0)|3))\s*?:?\s*[0-9]{1,}(\s|-)[0-9]{1,}(\s|-)[0-9]{4,}(\s|-)[0-9]{1,}(\s|-)(([0-9]|x){1,})*/i);
     console.log('isbn = ' + isbnScan);
     console.log('isbn2 = ' + isbnScan2);
     var isbnResult = null;
