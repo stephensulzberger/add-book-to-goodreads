@@ -6,24 +6,27 @@ chrome.runtime.onMessage.addListener(
         console.log('content is ' + request.content.length + ' bytes');
         console.log('content type is ' + typeof (request));
         //console.log(request.content);
-        //split into two regex patterns so it is a bit more clear what they actually do
-        isbnScan = request.content.match(/ISBN(-*1(?:(0)|3))?\s*?:?\s*?(97(8|9))?\d{9}(\d|X)/i);
-        isbnScan2 = request.content.match(/ISBN(-*1(?:(0)|3))\s*?:?\s*[0-9]{1,}(\s|-)[0-9]{1,}(\s|-)[0-9]{4,}(\s|-)[0-9]{1,}(\s|-)(([0-9]|x){1,})*/i);
-        console.log('isbn = ' + isbnScan);
-        console.log('isbn2 = ' + isbnScan2);
+
+        //split into two regex patterns so it is a bit more clear what they actually do        
+        var isbnScan10 = request.content.match(/ISBN(-*1(?:(0)|3))?\s*?:?\s*?(97(8|9))?\d{9}(\d|X)/i);
+        var isbnScan13 = request.content.match(/ISBN(-*1(?:(0)|3))\s*?:?\s*[0-9]{1,}(\s|-)[0-9]{1,}(\s|-)[0-9]{4,}(\s|-)[0-9]{1,}(\s|-)(([0-9]|x){1,})*/i);
+        console.log('ISBN 10 = ' + isbnScan10);
+        console.log('ISBN 13 = ' + isbnScan13);
+        
         var isbnResult = null;
-        if (isbnScan != null) {
-            console.log(isbnScan);
-            var tmp = isbnScan[0];
+        if (isbnScan10 != null) {
+            var tmp = isbnScan10[0];
             console.log('tmp ' + tmp + ' type ' + typeof (tmp));
             isbnResult = tmp.match(/([0-9|x]{10,13})/gmi);
             console.log('result' + isbnResult);
             console.log('result type ' + typeof (isbnResult));
-        } else if (isbnScan2 != null) {
-            var tmp = isbnScan2[0]
+        } else if (isbnScan13 != null) {
+            var tmp = isbnScan13[0]
             isbnResult = tmp.match(/[0-9]{1,}(\s|-)[0-9]{1,}(\s|-)[0-9]{4,}(\s|-)[0-9]{1,}(\s|-)(([0-9]|x){1,})*/gm);
             console.log('result' + isbnResult);
         }
+
+        Test(); 
 
         if (isbnResult != null) {
             //isbnResult = isbnResult.split(" ");
@@ -83,8 +86,13 @@ chrome.runtime.onMessage.addListener(
         }
 
     });
+
 chrome.tabs.query({ active: true }, function (tab) {
     chrome.tabs.executeScript(tab.id, {
         file: 'myscript.js'
     });
 });
+
+function Test(){
+    console.log("Test function ran."); 
+}
