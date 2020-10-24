@@ -7,30 +7,31 @@ chrome.runtime.onMessage.addListener(
         console.log('content type is ' + typeof (request));
         //console.log(request.content);
 
-        //split into two regex patterns so it is a bit more clear what they actually do        
         var isbnScan10 = request.content.match(/ISBN(-*1(?:(0)|3))?\s*?:?\s*?(97(8|9))?\d{9}(\d|X)/i);
         var isbnScan13 = request.content.match(/ISBN(-*1(?:(0)|3))\s*?:?\s*[0-9]{1,}(\s|-)[0-9]{1,}(\s|-)[0-9]{4,}(\s|-)[0-9]{1,}(\s|-)(([0-9]|x){1,})*/i);
+        var asinScan = request.content.match(/ASIN\s*:\s*([A-Z0-9]{10})/i);
         console.log('ISBN 10 = ' + isbnScan10);
         console.log('ISBN 13 = ' + isbnScan13);
-        
-        var isbnResult = null;
+        console.log('ASIN = ' + asinScan);
+
+        var bookID = null;
+
         if (isbnScan10 != null) {
             var tmp = isbnScan10[0];
-            console.log('tmp ' + tmp + ' type ' + typeof (tmp));
-            isbnResult = tmp.match(/([0-9|x]{10,13})/gmi);
-            console.log('result' + isbnResult);
-            console.log('result type ' + typeof (isbnResult));
+            bookID = tmp.match(/([0-9|x]{10,13})/gmi);
         } else if (isbnScan13 != null) {
-            var tmp = isbnScan13[0]
-            isbnResult = tmp.match(/[0-9]{1,}(\s|-)[0-9]{1,}(\s|-)[0-9]{4,}(\s|-)[0-9]{1,}(\s|-)(([0-9]|x){1,})*/gm);
-            console.log('result' + isbnResult);
+            var tmp = isbnScan13[0];
+            bookID = tmp.match(/[0-9]{1,}(\s|-)[0-9]{1,}(\s|-)[0-9]{4,}(\s|-)[0-9]{1,}(\s|-)(([0-9]|x){1,})*/gm);
+        } else if (asinScan != null) {
+            // var tmp = asinScan[0]; 
+            // isbnResult = tmp.match(/([A-Z0-9]{10})/gmi);
+            bookID = asinScan[1];
         }
 
-        Test(); 
+        console.log("bookID = " + bookID);
 
-        if (isbnResult != null) {
-            //isbnResult = isbnResult.split(" ");
-            isbn = isbnResult;
+        if (bookID != null) {
+            isbn = bookID;
             console.log(isbn);
             console.log(typeof (isbn));
             var req = new XMLHttpRequest();
@@ -45,6 +46,7 @@ chrome.runtime.onMessage.addListener(
             getId.send(null);
             var id = getId.responseText;
             console.log('goodreads id: ' + id)
+
             var newDiv = null;
 
             function printDesc() {
@@ -84,7 +86,6 @@ chrome.runtime.onMessage.addListener(
             badDiv.innerHTML = pageContent;
             document.body.appendChild(badDiv);
         }
-
     });
 
 chrome.tabs.query({ active: true }, function (tab) {
@@ -92,7 +93,3 @@ chrome.tabs.query({ active: true }, function (tab) {
         file: 'myscript.js'
     });
 });
-
-function Test(){
-    console.log("Test function ran."); 
-}
