@@ -29,8 +29,6 @@ chrome.runtime.onMessage.addListener(
 
         if (bookID != null) {
             isbn = bookID;
-            console.log(isbn);
-            console.log(typeof (isbn));
             var req = new XMLHttpRequest();
             req.open("GET", "http://www.goodreads.com/book/isbn?isbn=" + isbn + "&" + "key=PkY9lbrcAVS2dHn1DidESg", true);
             req.onload = printDesc;
