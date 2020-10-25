@@ -49,14 +49,18 @@ chrome.runtime.onMessage.addListener(
                     for (var i = 0, desc; desc = descriptions[i]; i++) {
                         newDiv = document.createElement("div");
                         console.log(desc);
-                        newContent = descriptions[i].textContent;
-                        console.log(newContent);
+
                         //build iframe for "add to goodreads"
                         goodreadsContent = '<iframe height="110" width="325" frameborder="0" scrolling="no" src="';
                         goodreadsContent += "https://www.goodreads.com/book/add_to_books_widget/" + bookID + "?atmb_widget%5Bbutton%5D=atmb_widget_1.png";
                         goodreadsContent += '"></iframe><p>';
-                        //reviews widget code from XML file
-                        //goodreadsContent += newContent;
+                        
+                        // reviews widget code from XML file
+                        // not useful right now, as it just loads another iframe with superfluous content
+                        // var newContent = descriptions[i].textContent;
+                        // console.log(newContent);
+                        // goodreadsContent += newContent;
+                        
                         goodreadsContent += '<i>' + title[0].textContent + '</i> by: ' + author[0].textContent;
 
                         newDiv.innerHTML = goodreadsContent;
