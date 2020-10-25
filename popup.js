@@ -36,11 +36,8 @@ chrome.runtime.onMessage.addListener(
 
             //get goodreads id from ISBN
             //not used now but maybe useful in future
-            var getId = new XMLHttpRequest();
-            getId.open("GET", "http://www.goodreads.com/book/isbn_to_id/" + isbn + "?" + "key=PkY9lbrcAVS2dHn1DidESg", false);
-            getId.send(null);
-            var id = getId.responseText;
-            console.log('goodreads id: ' + id)
+            // var id = GetGoodReadsBookID(isbn); 
+            // console.log('goodreads id: ' + id)
 
             var newDiv = null;
 
@@ -88,3 +85,12 @@ chrome.tabs.query({ active: true }, function (tab) {
         file: 'myscript.js'
     });
 });
+
+function GetGoodReadsBookID(bookID) {
+    var result = null;
+    var getId = new XMLHttpRequest();
+    getId.open("GET", "http://www.goodreads.com/book/isbn_to_id/" + bookID + "?" + "key=PkY9lbrcAVS2dHn1DidESg", false);
+    getId.send(null);
+    var result = getId.responseText;
+    return result;
+}
