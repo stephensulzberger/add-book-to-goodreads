@@ -1,4 +1,4 @@
-const _KEY = ""; 
+const _GOODREADS_API_KEY = ""; 
 
 chrome.runtime.onMessage.addListener(
 
@@ -29,7 +29,7 @@ chrome.runtime.onMessage.addListener(
 
         if (bookID != null) {
             var req = new XMLHttpRequest();
-            req.open("GET", "https://www.goodreads.com/book/isbn?isbn=" + bookID + "&" + "key=" + _KEY, true);
+            req.open("GET", "https://www.goodreads.com/book/isbn?isbn=" + bookID + "&" + "key=" + _GOODREADS_API_KEY, true);
             req.onload = printDesc;
             req.send(null);
 
@@ -90,7 +90,7 @@ chrome.tabs.query({ active: true }, function (tab) {
 function GetGoodReadsBookID(bookID) {
     var result = null;
     var getId = new XMLHttpRequest();
-    getId.open("GET", "https://www.goodreads.com/book/isbn_to_id/" + bookID + "?" + "key=" + _KEY, false);
+    getId.open("GET", "https://www.goodreads.com/book/isbn_to_id/" + bookID + "?" + "key=" + _GOODREADS_API_KEY, false);
     getId.send(null);
     var result = getId.responseText;
     return result;
