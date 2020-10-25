@@ -28,15 +28,14 @@ chrome.runtime.onMessage.addListener(
         console.log("bookID = " + bookID);
 
         if (bookID != null) {
-            isbn = bookID;
             var req = new XMLHttpRequest();
-            req.open("GET", "http://www.goodreads.com/book/isbn?isbn=" + isbn + "&" + "key=PkY9lbrcAVS2dHn1DidESg", true);
+            req.open("GET", "https://www.goodreads.com/book/isbn?isbn=" + bookID + "&" + "key=PkY9lbrcAVS2dHn1DidESg", true);
             req.onload = printDesc;
             req.send(null);
 
-            //get goodreads id from ISBN
+            //get goodreads id from ISBN / ASIN
             //not used now but maybe useful in future
-            // var id = GetGoodReadsBookID(isbn); 
+            // var id = GetGoodReadsBookID(bookID); 
             // console.log('goodreads id: ' + id)
 
             var newDiv = null;
@@ -54,7 +53,7 @@ chrome.runtime.onMessage.addListener(
                         console.log(newContent);
                         //build iframe for "add to goodreads"
                         goodreadsContent = '<iframe height="110" width="325" frameborder="0" scrolling="no" src="';
-                        goodreadsContent += "http://www.goodreads.com/book/add_to_books_widget/" + isbn + "?atmb_widget%5Bbutton%5D=atmb_widget_1.png&amp;";
+                        goodreadsContent += "https://www.goodreads.com/book/add_to_books_widget/" + bookID + "?atmb_widget%5Bbutton%5D=atmb_widget_1.png";
                         goodreadsContent += '"></iframe><p>';
                         //reviews widget code from XML file
                         //goodreadsContent += newContent;
@@ -89,7 +88,7 @@ chrome.tabs.query({ active: true }, function (tab) {
 function GetGoodReadsBookID(bookID) {
     var result = null;
     var getId = new XMLHttpRequest();
-    getId.open("GET", "http://www.goodreads.com/book/isbn_to_id/" + bookID + "?" + "key=PkY9lbrcAVS2dHn1DidESg", false);
+    getId.open("GET", "https://www.goodreads.com/book/isbn_to_id/" + bookID + "?" + "key=PkY9lbrcAVS2dHn1DidESg", false);
     getId.send(null);
     var result = getId.responseText;
     return result;
