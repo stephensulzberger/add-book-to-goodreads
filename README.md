@@ -1,16 +1,24 @@
-Add to Goodreads
-============
+# Add Book to Goodreads
 
-A simple Google Chrome extension that extracts a valid ISBN number from the current tab
-and loads the "Add to my books" (http://www.goodreads.com/api/atmb_widget) widget. This hack
-allows a user to easily add a book to one of the default shelves without requiring any special authentication (other than being logged in to the site). 
+Google Chrome extension to add a book you are viewing to your Want to Read, Currently Reading or Read shelf on Goodreads.
 
-See Chrome store entry:
+The extension allows you to add a book to a shelf without leaving the page you are on. It is designed to work on individual product pages, and it works for popular sites such as Amazon, Google Books and many others.
 
- https://chrome.google.com/webstore/detail/add-to-goodreads/lfpebbhpojbhmeaolnjdofjeihhgncbe?hl=en&gl=US
- 
-## Disclaimer:
+## Installation and Usage
 
-I don't have any prior experience with Javascript or Google Chrome. I wrote this mostly to solve a small problem, and it does for me.
+### Chrome Web Store
 
-Please feel free to fork, contribute, offer advice, etc...
+Not yet available
+
+### Side load
+
+1. Clone the repository to a local directory
+2. Get a Goodreads API key from https://www.goodreads.com/api/keys
+3. Set the Goodreads API key at `_GOODREADS_API_KEY`
+4. Load the unpacked extension into Google Chrome. See https://developer.chrome.com/extensions/getstarted#manifest
+
+## How It Works
+
+This extension loads the "Add to My Books" widget (http://www.goodreads.com/api/atmb_widget) using an ISBN or ASIN number scraped from the current tab. The extension is not designed for pages with multiple book identification numbers, and it will simply choose the first valid book identification number that it detects on the page. Since the extension is not limited to a specific book site, it requires the "Your data on all websites" and "Your tabs and browsing activity" permissions.
+
+This extension is an upgraded version of the original `Add to Goodreads` extension.
