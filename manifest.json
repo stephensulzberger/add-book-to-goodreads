@@ -5,6 +5,8 @@
   "description": "Add a book you are viewing to your Want to Read, Currently Reading or Read shelf on Goodreads.",
   "icons": {
     "16": "images/icon16.png",
+    "24": "images/icon24.png",
+    "32": "images/icon32.png",
     "48": "images/icon48.png",
     "128": "images/icon128.png"
   },
@@ -12,7 +14,9 @@
     "default_icon": {
       "16": "images/icon16.png",
       "24": "images/icon24.png",
-      "32": "images/icon32.png"
+      "32": "images/icon32.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
     },
     "default_title": "Add Book to Goodreads",
     "default_popup": "popup.html"
