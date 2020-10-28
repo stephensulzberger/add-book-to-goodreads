@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Add Book to Goodreads",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Add a book you are viewing to your Want to Read, Currently Reading or Read shelf on Goodreads.",
   "icons": {
     "16": "images/icon16.png",
@@ -24,17 +24,6 @@
   "permissions": [
     "activeTab",
     "<all_urls>"
-  ],
-  "content_scripts": [
-    {
-      "matches": [
-        "https://*.goodreads.com/"
-      ],
-      "js": [
-        "myscript.js"
-      ],
-      "run_at": "document_idle"
-    }
   ],
   "background": {
     "scripts": [
