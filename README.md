@@ -8,7 +8,7 @@ The extension allows you to add a book to a shelf without leaving the page you a
 
 ### Chrome Web Store
 
-https://chrome.google.com/webstore/detail/add-book-to-goodreads/kecmjklilofklihnefffjgafcbjmbbbl?hl=en&authuser=0
+https://chrome.google.com/webstore/detail/add-book-to-goodreads/kecmjklilofklihnefffjgafcbjmbbbl
 
 ### Side load
 
