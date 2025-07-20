@@ -1,90 +1,79 @@
-const _GOODREADS_API_KEY = ""; 
+const _GOODREADS_API_KEY = "";
+
+console.log("Popup script loaded and running."); // Log to confirm script execution
+
+let messageHandled = false; // Flag to prevent repeated message handling
 
 chrome.runtime.onMessage.addListener(
+    async function (request, sender, sendResponse) {
 
-    function (request, sender, sendResponse) {
-        // console.log('content is ' + request.content.length + ' bytes');
-        // console.log('content type is ' + typeof (request));
+        console.log("Message received in popup.js:", request); // Debugging log
+        
+        //console.log("Request action:", request.action); // Log the action for debugging
 
-        var isbnScan10 = request.content.match(/ISBN(-*1(?:(0)|3))?\s*?:?\s*?(97(8|9))?\d{9}(\d|X)/i);
-        var isbnScan13 = request.content.match(/ISBN(-*1(?:(0)|3))\s*?:?\s*[0-9]{1,}(\s|-)[0-9]{1,}(\s|-)[0-9]{4,}(\s|-)[0-9]{1,}(\s|-)(([0-9]|x){1,})*/i);
-        var asinScan = request.content.match(/ASIN\s*:\s*([A-Z0-9]{10})/i);
-        console.log('ISBN 10 = ' + isbnScan10);
-        console.log('ISBN 13 = ' + isbnScan13);
-        console.log('ASIN = ' + asinScan);
+        // Filter messages by action to avoid feedback loop
+        if (request.action === "content") {
+            
+            //console.log("Processing content:", request.content);
 
-        var bookID = null;
+            const content = request.content || "";
+            const isbnScan10 = content.match(/ISBN(-*1(?:(0)|3))?\s*?:?\s*?(97(8|9))?\d{9}(\d|X)/i);
+            const isbnScan13 = content.match(/ISBN(-*1(?:(0)|3))\s*?:?\s*[0-9]{1,}(\s|-)[0-9]{1,}(\s|-)[0-9]{4,}(\s|-)[0-9]{1,}(\s|-)(([0-9]|x){1,})*/i);
+            const asinScan = content.match(/ASIN[\s\p{Cf}]*:[\s\p{Cf}]*([A-Z0-9]{10})/iu);
 
-        if (isbnScan10 != null) {
-            var tmp = isbnScan10[0];
-            bookID = tmp.match(/([0-9|x]{10,13})/gmi);
-        } else if (isbnScan13 != null) {
-            var tmp = isbnScan13[0];
-            bookID = tmp.match(/[0-9]{1,}(\s|-)[0-9]{1,}(\s|-)[0-9]{4,}(\s|-)[0-9]{1,}(\s|-)(([0-9]|x){1,})*/gm);
-        } else if (asinScan != null) {
-            bookID = asinScan[1];
-        }
+            let bookID = null;
 
-        console.log("bookID = " + bookID);
-
-        if (bookID != null) {
-            var req = new XMLHttpRequest();
-            req.open("GET", "https://www.goodreads.com/book/isbn?isbn=" + bookID + "&" + "key=" + _GOODREADS_API_KEY, true);
-            req.onload = printDesc;
-            req.send(null);
-
-            //get goodreads id from ISBN / ASIN
-            //not used now but maybe useful in future
-            // var id = GetGoodReadsBookID(bookID); 
-            // console.log('goodreads id: ' + id)
-
-            var newDiv = null;
-
-            function printDesc() {
-                if (req.status == 200) {
-                    var descriptions = req.responseXML.getElementsByTagName("reviews_widget");
-                    var title = req.responseXML.getElementsByTagName("title");
-                    var author = req.responseXML.getElementsByTagName("author");
-                    author = author[0].getElementsByTagName("name");
-                    for (var i = 0, desc; desc = descriptions[i]; i++) {
-                        //console.log(desc);
-
-                        var goodreadsContent = '<iframe height="110" width="325" frameborder="0" scrolling="no" src="';
-                        goodreadsContent += "https://www.goodreads.com/book/add_to_books_widget/" + bookID + "?atmb_widget%5Bbutton%5D=atmb_widget_1.png";
-                        goodreadsContent += '"></iframe><p>';
-                        
-                        // reviews widget code from XML file
-                        // not useful right now, as it just loads another iframe with superfluous content
-                        // var newContent = descriptions[i].textContent;
-                        // console.log(newContent);
-                        // goodreadsContent += newContent;
-                        
-                        goodreadsContent += '<i>' + title[0].textContent + '</i> by: ' + author[0].textContent;
-
-                        newDiv = document.createElement("div");
-                        newDiv.innerHTML = goodreadsContent;
-                        document.body.appendChild(newDiv);
-                    }
-                }
-                else {
-                    badDiv = document.createElement("div");
-                    pageContent = req.responseText;
-                    badDiv.innerHTML = pageContent;
-                    document.body.appendChild(badDiv);
-                }
+            if (isbnScan10) {
+                const tmp = isbnScan10[0];
+                bookID = tmp.match(/([0-9|x]{10,13})/gmi);
+            } else if (isbnScan13) {
+                const tmp = isbnScan13[0];
+                bookID = tmp.match(/[0-9]{1,}(\s|-)[0-9]{1,}(\s|-)[0-9]{4,}(\s|-)[0-9]{1,}(\s|-)(([0-9]|x){1,})*/gm);
+            } else if (asinScan) {
+                bookID = asinScan[1];
             }
-        } else {
-            badDiv = document.createElement("div");
-            pageContent = "No ISBN number found on this page :(";
-            badDiv.innerHTML = pageContent;
-            document.body.appendChild(badDiv);
+
+            console.log("Book ID=", bookID);
+
+            if (bookID) {
+                try {
+                    const response = await fetch(`https://www.goodreads.com/book/isbn?isbn=${bookID}&key=${_GOODREADS_API_KEY}`);
+                    if (response.ok) {
+                        const responseBody = await response.text();
+                        console.log("Response body:", responseBody);
+                        chrome.runtime.sendMessage({
+                            action: "displayMessage",
+                            message: responseBody
+                        });
+                    } else {
+                        throw new Error("Failed to fetch Goodreads data.");
+                    }
+                } catch (error) {
+                    console.error(error);
+                    chrome.runtime.sendMessage({
+                        action: "displayMessage",
+                        message: "Failed to fetch Goodreads data. Please try again later."
+                    });
+                }
+            } else {
+                console.log("No ISBN or ASIN found in the content.");
+                chrome.runtime.sendMessage({
+                    action: "displayMessage",
+                    message: "No valid ISBN or ASIN was found. Please check the content and try again."
+                });
+            }
         }
     });
 
-chrome.tabs.query({ active: true }, function (tab) {
-    chrome.tabs.executeScript(tab.id, {
-        file: 'myscript.js'
-    });
+chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    if (tabs.length > 0) {
+        chrome.scripting.executeScript({
+            target: { tabId: tabs[0].id },
+            files: ['myscript.js']
+        });
+    } else {
+        console.error("No active tab found.");
+    }
 });
 
 function GetGoodReadsBookID(bookID) {
