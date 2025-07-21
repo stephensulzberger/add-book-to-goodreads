@@ -1,4 +1,4 @@
-const _GOODREADS_API_KEY = "";
+const _GOODREADS_API_KEY = ""; 
 
 console.log("Popup script loaded and running."); // Log to confirm script execution
 
@@ -35,24 +35,57 @@ chrome.runtime.onMessage.addListener(
 
             console.log("Book ID=", bookID);
 
+            chrome.runtime.sendMessage({ action: "toggleLoading", isLoading: true });
+
             if (bookID) {
                 try {
                     const response = await fetch(`https://www.goodreads.com/book/isbn?isbn=${bookID}&key=${_GOODREADS_API_KEY}`);
                     if (response.ok) {
                         const responseBody = await response.text();
-                        console.log("Response body:", responseBody);
+                        
+                        // console.log("Response body:", responseBody);
+                        // chrome.runtime.sendMessage({
+                        //     action: "displayMessage",
+                        //     message: responseBody
+                        // });
+
+                        // Send bookID to popup-handler.js for widget injection
+                        chrome.runtime.sendMessage({
+                            action: "loadWidget",
+                            bookID: bookID
+                        });
+
+                        // Manually parse the XML response to extract title 
+                        const titleMatch = responseBody.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/);
+                        const title = titleMatch ? titleMatch[1] : "Unknown Title";
+
+                        // Manually parse the XML response to extract authors
+                        // Extract authors only from the <book><authors> node
+                        // This ensures we get the correct authors even if there are multiple
+                        // authors listed in the XML response
+                        // Example: <authors><author><name>Author Name</name></author></authors
+                        const authorsNodeMatch = responseBody.match(/<authors>(.*?)<\/authors>/s);
+                        const authors = authorsNodeMatch ? authorsNodeMatch[1].match(/<name>(.*?)<\/name>/g)?.map(nameTag => nameTag.match(/<name>(.*?)<\/name>/)[1]).join(", ") : "Unknown Author";                        
+
+                        chrome.runtime.sendMessage({
+                            action: "updateBookDetails",
+                            title: title,
+                            author: authors
+                        });
+                    } else if (response.status === 404) {
+                        console.error("Book not found on Goodreads.");
                         chrome.runtime.sendMessage({
                             action: "displayMessage",
-                            message: responseBody
+                            message: `Book not found on Goodreads. Please check the ISBN or ASIN and try again. (Book ID: ${bookID})`
                         });
                     } else {
-                        throw new Error("Failed to fetch Goodreads data.");
+                        throw new Error(`Failed to fetch Goodreads data. (Book ID: ${bookID})`);
                     }
                 } catch (error) {
                     console.error(error);
                     chrome.runtime.sendMessage({
                         action: "displayMessage",
-                        message: "Failed to fetch Goodreads data. Please try again later."
+                        message: `Failed to fetch Goodreads data. Please try again later. (Book ID: ${bookID})`
                     });
                 }
             } else {
@@ -62,6 +95,8 @@ chrome.runtime.onMessage.addListener(
                     message: "No valid ISBN or ASIN was found. Please check the content and try again."
                 });
             }
+
+            chrome.runtime.sendMessage({ action: "toggleLoading", isLoading: false });
         }
     });
 

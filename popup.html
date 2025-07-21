@@ -5,10 +5,12 @@
   <title>Add to Goodreads v2</title>
   <style>
     body {
-      min-width: 357px;
-      font-family: georgia, serif;
-      overflow: hidden;
+      /* font-family: 'Times New Roman', Times, serif; */
+      font-family: Georgia, serif;
+      font-size: 12px;
+      line-height: 18px;
     }
+  </style>
   </style>
   <!-- JavaScript and HTML must be in separate files for security. -->
   <script src="popup.js"></script>
@@ -16,7 +18,32 @@
 </head>
 
 <body>
-  <div id="message" style="color: rgb(60, 0, 255); font-size: 14px; margin-top: 10px; display: none;"></div>
+  <div style="width: 325px;">
+    <div id="content">
+      <div id="message" style="color: red; margin-top: 10px; display: none;"></div>
+      <div id="content-success">
+        <iframe id="add-to-books-iframe" height="110" width="325" frameborder="0" scrolling="no" src=""></iframe>
+        <span id="book-title" style="font-style: italic;"></span>
+        <div style="margin-top: 14px;">
+          Author: <span id="author-name"></span>
+        </div>
+        <div id="widget-container" style="margin-top: 20px; text-align: left;">
+          <div id="gr_add_to_books">
+            <div class="gr_custom_each_container_">
+              <a id="add-to-books-link" target="_blank" style="border:none" rel="nofollow noopener noreferrer" href="">
+                View on Goodreads
+                <!-- <img alt="Add to My Books"
+                 src="https://s.gr-assets.com/images/atmb_add_book-70x25.png" /> -->
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="loading-indicator" style="text-align: left; margin-top: 20px;">
+      <p>Loading...</p>
+    </div>
+  </div>
 </body>
 
 </html>
