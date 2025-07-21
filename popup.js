@@ -2,8 +2,6 @@ const _GOODREADS_API_KEY = "";
 
 console.log("Popup script loaded and running."); // Log to confirm script execution
 
-let messageHandled = false; // Flag to prevent repeated message handling
-
 chrome.runtime.onMessage.addListener(
     async function (request, sender, sendResponse) {
 
