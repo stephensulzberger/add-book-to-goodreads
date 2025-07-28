@@ -1,4 +1,4 @@
-const _GOODREADS_API_KEY = ""; 
+const _GOODREADS_API_KEY = "";
 
 console.log("Popup script loaded and running."); // Log to confirm script execution
 
@@ -6,12 +6,12 @@ chrome.runtime.onMessage.addListener(
     async function (request, sender, sendResponse) {
 
         console.log("Message received in popup.js:", request); // Debugging log
-        
+
         //console.log("Request action:", request.action); // Log the action for debugging
 
         // Filter messages by action to avoid feedback loop
         if (request.action === "content") {
-            
+
             //console.log("Processing content:", request.content);
 
             const content = request.content || "";
@@ -40,8 +40,9 @@ chrome.runtime.onMessage.addListener(
                     const response = await fetch(`https://www.goodreads.com/book/isbn?isbn=${bookID}&key=${_GOODREADS_API_KEY}`);
                     if (response.ok) {
                         const responseBody = await response.text();
-                        
-                        // console.log("Response body:", responseBody);
+
+                        //console.log("Response body:", responseBody);
+
                         // chrome.runtime.sendMessage({
                         //     action: "displayMessage",
                         //     message: responseBody
@@ -54,7 +55,11 @@ chrome.runtime.onMessage.addListener(
                         });
 
                         // Manually parse the XML response to extract title 
-                        const titleMatch = responseBody.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/);
+                        // Match both CDATA and non-CDATA titles
+                        // Example: <title><![CDATA[Book Title]]></title> or <title>Book Title</title>
+                        // This ensures we get the correct title even if it is wrapped in CDATA
+                        // or not wrapped at all
+                        const titleMatch = responseBody.match(/<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/);
                         const title = titleMatch ? titleMatch[1] : "Unknown Title";
 
                         // Manually parse the XML response to extract authors
@@ -63,7 +68,7 @@ chrome.runtime.onMessage.addListener(
                         // authors listed in the XML response
                         // Example: <authors><author><name>Author Name</name></author></authors
                         const authorsNodeMatch = responseBody.match(/<authors>(.*?)<\/authors>/s);
-                        const authors = authorsNodeMatch ? authorsNodeMatch[1].match(/<name>(.*?)<\/name>/g)?.map(nameTag => nameTag.match(/<name>(.*?)<\/name>/)[1]).join(", ") : "Unknown Author";                        
+                        const authors = authorsNodeMatch ? authorsNodeMatch[1].match(/<name>(.*?)<\/name>/g)?.map(nameTag => nameTag.match(/<name>(.*?)<\/name>/)[1]).join(", ") : "Unknown Author";
 
                         chrome.runtime.sendMessage({
                             action: "updateBookDetails",
