@@ -1,0 +1,15 @@
+# For testing only. Not used.
+# Files to exclude from Chrome Extension package
+README.md
+CHROME_WEBSTORE.md
+build.sh
+.git/
+.gitignore
+.DS_Store
+node_modules/
+package.json
+package-lock.json
+*.log
+*.tmp
+.vscode/
+response-test.xml
