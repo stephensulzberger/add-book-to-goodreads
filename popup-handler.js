@@ -1,5 +1,6 @@
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    //console.log("Message received in popup-handler.js:", request); // Debugging log
+    // console.log("Message received in popup-handler.js:", request); // Debugging log
+
     if (request.action === "displayMessage") {
         const messageElement = document.getElementById("message");
         const contentSuccess = document.getElementById("content-success");

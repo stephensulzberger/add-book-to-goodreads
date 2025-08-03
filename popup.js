@@ -1,11 +1,11 @@
 const _GOODREADS_API_KEY = "";
 
-console.log("Popup script loaded and running."); // Log to confirm script execution
+//console.log("Popup script loaded and running."); // Log to confirm script execution
 
 chrome.runtime.onMessage.addListener(
     async function (request, sender, sendResponse) {
 
-        console.log("Message received in popup.js:", request); // Debugging log
+        //console.log("Message received in popup.js:", request); // Debugging log
 
         //console.log("Request action:", request.action); // Log the action for debugging
 
@@ -31,7 +31,7 @@ chrome.runtime.onMessage.addListener(
                 bookID = asinScan[1];
             }
 
-            console.log("Book ID=", bookID);
+            //console.log("Book ID=", bookID);
 
             chrome.runtime.sendMessage({ action: "toggleLoading", isLoading: true });
 
@@ -60,7 +60,8 @@ chrome.runtime.onMessage.addListener(
                         // This ensures we get the correct title even if it is wrapped in CDATA
                         // or not wrapped at all
                         const titleMatch = responseBody.match(/<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/);
-                        const title = titleMatch ? titleMatch[1] : "Unknown Title";
+                        const rawTitle = titleMatch ? titleMatch[1] : "Unknown Title";
+                        const title = decodeHtmlEntities(rawTitle);
 
                         // Manually parse the XML response to extract authors
                         // Extract authors only from the <book><authors> node
@@ -68,7 +69,8 @@ chrome.runtime.onMessage.addListener(
                         // authors listed in the XML response
                         // Example: <authors><author><name>Author Name</name></author></authors
                         const authorsNodeMatch = responseBody.match(/<authors>(.*?)<\/authors>/s);
-                        const authors = authorsNodeMatch ? authorsNodeMatch[1].match(/<name>(.*?)<\/name>/g)?.map(nameTag => nameTag.match(/<name>(.*?)<\/name>/)[1]).join(", ") : "Unknown Author";
+                        const rawAuthors = authorsNodeMatch ? authorsNodeMatch[1].match(/<name>(.*?)<\/name>/g)?.map(nameTag => nameTag.match(/<name>(.*?)<\/name>/)[1]).join(", ") : "Unknown Author";
+                        const authors = decodeHtmlEntities(rawAuthors);
 
                         chrome.runtime.sendMessage({
                             action: "updateBookDetails",
@@ -113,6 +115,28 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         console.error("No active tab found.");
     }
 });
+
+// Helper function to decode HTML entities.
+// Eventually this should be replaced with a more robust library or method.
+// Currently required because this code file does not have access to the DOMParser
+// and thus cannot use the DOMParser to parse HTML entities. 
+function decodeHtmlEntities(text) {
+    return text.replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&#x27;/g, "'")
+        .replace(/&#x2F;/g, '/')
+        .replace(/&#x60;/g, '`')
+        .replace(/&#x3D;/g, '=')
+        .replace(/&#8217;/g, "'")
+        .replace(/&#8220;/g, '"')
+        .replace(/&#8221;/g, '"')
+        .replace(/&#8230;/g, '...')
+        .replace(/&#8212;/g, '—')
+        .replace(/&#8211;/g, '–');
+}
 
 function GetGoodReadsBookID(bookID) {
     var result = null;
