@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Add Book to Goodreads",
   "version": "3.0.0",
-  "description": "Easily add the book you're viewing to your Goodreads shelves: Want to Read, Currently Reading, or Read.",
+  "description": "Detects books on web pages and provides quick access to add them to your Goodreads shelves.",
   "icons": {
     "16": "images/icon16.png",
     "24": "images/icon24.png",
