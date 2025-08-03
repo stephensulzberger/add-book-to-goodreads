@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Add to Goodreads v2</title>
+  <style>
+    body {
+      min-width: 357px;
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+    }
+
+    #book-info {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    #book-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+      margin: 0;
+    }
+
+    #book-author {
+      font-size: 16px;
+      color: #555;
+      margin: 5px 0 0;
+    }
+
+    #widget-container {
+      text-align: center;
+    }
+
+    #add-to-books-link img {
+      margin: 10px 0;
+    }
+
+    iframe {
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+  </style>
+  <!-- JavaScript and HTML must be in separate files for security. -->
+  <script src="popup.js"></script>
+  <script src="popup-handler.js"></script>
+</head>
+
+<body>
+  <div id="message" style="color: red; font-size: 14px; margin-top: 10px; display: none;"></div>
+  <div id="book-info" style="margin-top: 20px;">
+    <h3 id="book-title" style="font-size: 20px; color: #333;">Title: </h3>
+    <p id="book-author" style="font-size: 16px; color: #555;">by <span id="author-name">Author</span></p>
+  </div>
+  <iframe id="add-to-books-iframe" frameborder="0" scrolling="no" src=""></iframe>
+  <div id="widget-container" style="margin-top: 20px; text-align: center;">
+    <div id="gr_add_to_books">
+      <div class="gr_custom_each_container_">
+        <a id="add-to-books-link" target="_blank" style="border:none" rel="nofollow noopener noreferrer"
+           href="">
+          View on Goodreads
+           <!-- <img alt="Add to My Books"
+               src="https://s.gr-assets.com/images/atmb_add_book-70x25.png" /> -->
+        </a>
+      </div>
+    </div>
+  </div>  
+</div>
+</body>
+
+</html>
