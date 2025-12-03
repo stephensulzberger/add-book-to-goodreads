@@ -1,7 +1,7 @@
 Book, link, Notes, Goodreads API XML
 How To Win Friends & Influence People, https://www.amazon.com/How-Win-Friends-Influence-People-ebook/dp/B0C8PM6H43/, Good standard test with title wrapped in CDATA, https://www.goodreads.com/book/isbn?isbn=B0C8PM6H43&key= 
 Wayne of Gotham: A Novel, https://www.amazon.com/Wayne-Gotham-Novel-Tracy-Hickman-ebook/dp/B005C6L2HW/, XML from Goodreads API did not return title wrapped in CDATA, https://www.goodreads.com/book/isbn?isbn=B005C6L2HW&key=
-Artifact: Old Mans Comeback, https://www.amazon.com/dp/B0FBBV3T2H/, Good standard book to test with
+Artifact: Old Mans Comeback, https://www.amazon.com/dp/B0FBBV3T2H/, Good standard book to test with,
 Enemies & Allies: A Novel, https://www.amazon.com/dp/B0027KRRMA/, Gave problems with ampersand in title, https://www.goodreads.com/book/isbn?isbn=B0027KRRMA&key=
-
+Ohio to Supersonic: Flying the SR-71 Blackbird to the secret world of the Skunk Works, https://www.amazon.com/Ohio-Supersonic-Flying-Blackbird-secret/dp/1804519413, Shows CDATA in the title string
 
